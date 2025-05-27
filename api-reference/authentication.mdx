@@ -1,0 +1,124 @@
+---
+title: "Authentication"
+description: "Learn how to authenticate with the Tesseract Workflow API"
+---
+
+## Overview
+
+The Tesseract Workflow API uses API key authentication to secure all endpoints. Each API key is associated with a specific user account and provides access only to that user's workflows and runs.
+
+## Getting Your API Key
+
+<Steps>
+  <Step title="Access Your Dashboard">
+    Log into your Tesseract dashboard to manage your API keys.
+  </Step>
+  <Step title="Generate API Key">
+    Navigate to the API Keys section and generate a new key for your application.
+  </Step>
+  <Step title="Store Securely">
+    Store your API key securely and never expose it in client-side code.
+  </Step>
+</Steps>
+
+## Using Your API Key
+
+Include your API key in the `Authorization` header of every request:
+
+```bash
+Authorization: Bearer YOUR_API_KEY
+```
+
+### Example Request
+
+```bash
+curl -X GET "https://api.heytessa.ai/v1/get_workflow_details" \
+  -H "Authorization: Bearer sk_test_1234567890abcdef" \
+  -H "Content-Type: application/json"
+```
+
+## API Key Security
+
+<Warning>
+  **Keep your API keys secure!** Never expose them in client-side code, public repositories, or logs.
+</Warning>
+
+### Best Practices
+
+- **Environment Variables**: Store API keys in environment variables
+- **Secure Storage**: Use secure key management systems in production
+- **Rotation**: Regularly rotate your API keys
+- **Monitoring**: Monitor API key usage for suspicious activity
+
+### Example Environment Setup
+
+```bash
+# .env file
+TESSERACT_API_KEY=sk_test_1234567890abcdef
+```
+
+```python
+# Python example
+import os
+import requests
+
+api_key = os.getenv('TESSERACT_API_KEY')
+headers = {
+    'Authorization': f'Bearer {api_key}',
+    'Content-Type': 'application/json'
+}
+
+response = requests.get(
+    'https://api.heytessa.ai/v1/get_workflow_details',
+    headers=headers
+)
+```
+
+## Authentication Errors
+
+### Invalid API Key (401)
+
+```json
+{
+  "detail": "Invalid API key"
+}
+```
+
+### Inactive API Key (401)
+
+```json
+{
+  "detail": "API key is inactive"
+}
+```
+
+### Missing Authorization Header (401)
+
+```json
+{
+  "detail": "Not authenticated"
+}
+```
+
+## API Key Management
+
+### Key States
+
+- **Active**: Key is valid and can be used for API requests
+- **Inactive**: Key has been disabled and cannot be used
+- **Revoked**: Key has been permanently deleted
+
+### Key Permissions
+
+Each API key provides access to:
+
+- ✅ User's workflows and workflow details
+- ✅ Starting and stopping user's workflows
+- ✅ Viewing user's workflow runs and status
+- ✅ Deleting user's workflow runs
+- ❌ Other users' data (strict isolation)
+- ❌ Administrative functions
+
+<Note>
+  API keys are scoped to individual users and cannot access data belonging to other users.
+</Note> 

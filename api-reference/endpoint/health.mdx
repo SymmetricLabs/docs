@@ -1,0 +1,52 @@
+---
+title: "Health Check"
+api: "GET /v1/health"
+description: "Check the health status of the API server"
+---
+
+## Overview
+
+The health check endpoint provides a simple way to verify that the API server is running and responsive. This endpoint does not require authentication and is useful for monitoring and load balancer health checks.
+
+## Request
+
+No authentication or parameters required.
+
+```bash
+curl -X GET "https://api.heytessa.ai/v1/health"
+```
+
+## Response
+
+Returns the current health status and timestamp.
+
+<ResponseExample>
+```json
+{
+  "status": "healthy",
+  "timestamp": "2024-01-15T10:30:00.123456"
+}
+```
+</ResponseExample>
+
+## Response Fields
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `status` | string | Always returns "healthy" when the server is operational |
+| `timestamp` | string | Current server timestamp in ISO 8601 format |
+
+## Rate Limiting
+
+- **Limit**: 10 requests per minute per IP address
+- **Headers**: Rate limit information is included in response headers
+
+## Use Cases
+
+- **Monitoring**: Automated health checks for server monitoring
+- **Load Balancing**: Health checks for load balancer configuration
+- **Development**: Quick verification that the API server is running
+
+<Note>
+  This endpoint is designed to be lightweight and fast, making it ideal for frequent health checks.
+</Note>

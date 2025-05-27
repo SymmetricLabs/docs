@@ -1,0 +1,102 @@
+---
+title: "Get Workflow Status"
+api: "GET /v1/get_workflow_status/{run_id}"
+description: "Get the current status and output of a specific workflow run"
+---
+
+## Overview
+
+This endpoint retrieves the current status, output, and execution details of a specific workflow run. Use this to monitor workflow progress and retrieve results.
+
+## Authentication
+
+Requires a valid API key in the Authorization header.
+
+```bash
+Authorization: Bearer YOUR_API_KEY
+```
+
+## Path Parameters
+
+<ParamField path="run_id" type="string" required>
+  The unique identifier of the workflow run to check
+</ParamField>
+
+## Request Example
+
+```bash
+curl -X GET "https://api.heytessa.ai/v1/get_workflow_status/run_789012" \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+
+## Response
+
+Returns detailed status information about the workflow run.
+
+<ResponseExample>
+```json
+{
+  "job_id": "run_789012",
+  "status": "completed",
+  "output": "Processing completed successfully. 1,234 records processed.",
+  "error_message": null,
+  "current_node_id": "node_final",
+  "started_at": "2024-01-15T10:30:00Z",
+  "ended_at": "2024-01-15T10:45:30Z"
+}
+```
+</ResponseExample>
+
+## Response Fields
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `job_id` | string | The workflow run identifier |
+| `status` | string | Current status: "running", "completed", "failed", "stopped" |
+| `output` | string | Workflow output or results (if available) |
+| `error_message` | string | Error details if the workflow failed |
+| `current_node_id` | string | ID of the currently executing node |
+| `started_at` | string | Workflow start timestamp (ISO 8601) |
+| `ended_at` | string | Workflow end timestamp (ISO 8601, null if still running) |
+
+## Status Values
+
+| Status | Description |
+|--------|-------------|
+| `running` | Workflow is currently executing |
+| `completed` | Workflow finished successfully |
+| `failed` | Workflow encountered an error and stopped |
+| `stopped` | Workflow was manually stopped by user |
+
+## Rate Limiting
+
+- **Limit**: 60 requests per minute per user
+
+## Error Responses
+
+<ResponseExample>
+```json
+{
+  "detail": "Workflow run not found"
+}
+```
+</ResponseExample>
+
+<ResponseExample>
+```json
+{
+  "detail": "Access denied to this workflow run"
+}
+```
+</ResponseExample>
+
+## Use Cases
+
+- **Progress Monitoring**: Check if a long-running workflow is still active
+- **Result Retrieval**: Get the output once a workflow completes
+- **Error Debugging**: Investigate failed workflows
+- **Real-time Updates**: Poll for status changes in running workflows
+
+<Note>
+  For real-time monitoring, you can poll this endpoint periodically. The high rate limit (60/minute) supports frequent status checks.
+</Note>

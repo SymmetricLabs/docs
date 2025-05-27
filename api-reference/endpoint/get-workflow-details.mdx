@@ -1,0 +1,99 @@
+---
+title: "Get Workflow Details"
+api: "GET /v1/get_workflow_details"
+description: "Retrieve details of all available workflows including input/output schemas"
+---
+
+## Overview
+
+This endpoint returns detailed information about all workflows available to the authenticated user, including their input parameters, descriptions, and metadata.
+
+## Authentication
+
+Requires a valid API key in the Authorization header.
+
+```bash
+Authorization: Bearer YOUR_API_KEY
+```
+
+## Request
+
+```bash
+curl -X GET "https://api.heytessa.ai/v1/get_workflow_details" \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+
+## Response
+
+Returns an array of workflow details.
+
+<ResponseExample>
+```json
+[
+  {
+    "workflow_id": "wf_123456",
+    "workflow_name": "Data Processing Pipeline",
+    "version_number": 1,
+    "description": "Automated data processing and analysis workflow",
+    "input_parameters": [
+      {
+        "name": "input_file",
+        "type": "string",
+        "required": true,
+        "description": "Path to the input data file"
+      },
+      {
+        "name": "processing_mode",
+        "type": "string",
+        "required": false,
+        "default": "standard",
+        "options": ["standard", "advanced"]
+      }
+    ],
+    "initial_url": "https://example.com/start"
+  }
+]
+```
+</ResponseExample>
+
+## Response Fields
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `workflow_id` | string | Unique identifier for the workflow |
+| `workflow_name` | string | Human-readable name of the workflow |
+| `version_number` | integer | Version number of the workflow |
+| `description` | string | Optional description of the workflow |
+| `input_parameters` | array | Array of input parameter definitions |
+| `initial_url` | string | Optional initial URL for the workflow |
+
+### Input Parameter Fields
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `name` | string | Parameter name |
+| `type` | string | Data type (string, integer, boolean, etc.) |
+| `required` | boolean | Whether the parameter is required |
+| `description` | string | Parameter description |
+| `default` | any | Default value (if not required) |
+| `options` | array | Valid options (for enum-type parameters) |
+
+## Rate Limiting
+
+- **Limit**: 30 requests per minute per user
+
+## Error Responses
+
+<ResponseExample>
+```json
+{
+  "detail": "Invalid API key"
+}
+```
+</ResponseExample>
+
+## Use Cases
+
+- **Workflow Discovery**: Find available workflows and their capabilities
+- **Dynamic UI Generation**: Build forms based on input parameter schemas
+- **Integration Planning**: Understand workflow requirements before execution

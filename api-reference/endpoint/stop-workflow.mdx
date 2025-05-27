@@ -1,0 +1,90 @@
+---
+title: "Stop Workflow"
+api: "POST /v1/stop_workflow/{run_id}"
+description: "Stop a running workflow by run ID"
+---
+
+## Overview
+
+This endpoint allows you to stop a currently running workflow. Once stopped, the workflow cannot be resumed and will have a status of "stopped".
+
+## Authentication
+
+Requires a valid API key in the Authorization header.
+
+```bash
+Authorization: Bearer YOUR_API_KEY
+```
+
+## Path Parameters
+
+<ParamField path="run_id" type="string" required>
+  The unique identifier of the workflow run to stop
+</ParamField>
+
+## Request Example
+
+```bash
+curl -X POST "https://api.heytessa.ai/v1/stop_workflow/run_789012" \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+
+## Response
+
+Returns confirmation of the stop operation.
+
+<ResponseExample>
+```json
+{
+  "status": "success",
+  "message": "Workflow stopped successfully",
+  "data": {
+    "run_id": "run_789012"
+  }
+}
+```
+</ResponseExample>
+
+## Response Fields
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `status` | string | "success" or "error" |
+| `message` | string | Human-readable status message |
+| `data.run_id` | string | The run ID that was stopped |
+
+## Rate Limiting
+
+- **Limit**: 20 requests per minute per user
+
+## Error Responses
+
+<ResponseExample>
+```json
+{
+  "detail": "Workflow run not found"
+}
+```
+</ResponseExample>
+
+<ResponseExample>
+```json
+{
+  "detail": "Access denied to this workflow run"
+}
+```
+</ResponseExample>
+
+## Use Cases
+
+- **Emergency Stop**: Halt workflows that are consuming too many resources
+- **Cancellation**: Stop workflows that are no longer needed
+- **Error Recovery**: Stop workflows that appear to be stuck or malfunctioning
+
+<Warning>
+  Stopping a workflow is irreversible. The workflow cannot be resumed from where it left off.
+</Warning>
+
+<Note>
+  You can only stop workflows that belong to your user account. The API will verify ownership before allowing the stop operation.
+</Note> 

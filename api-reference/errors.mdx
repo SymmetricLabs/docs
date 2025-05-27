@@ -1,0 +1,328 @@
+---
+title: "Error Handling"
+description: "Understanding and handling API errors effectively"
+---
+
+## Overview
+
+The Tesseract Workflow API uses conventional HTTP response codes to indicate the success or failure of an API request. This guide covers all possible error scenarios and how to handle them.
+
+## HTTP Status Codes
+
+| Code | Status | Description |
+|------|--------|-------------|
+| `200` | OK | Request succeeded |
+| `400` | Bad Request | Invalid request parameters |
+| `401` | Unauthorized | Invalid or missing API key |
+| `403` | Forbidden | Access denied to resource |
+| `404` | Not Found | Resource not found |
+| `429` | Too Many Requests | Rate limit exceeded |
+| `500` | Internal Server Error | Server error |
+
+## Error Response Format
+
+All error responses follow a consistent format:
+
+```json
+{
+  "detail": "Human readable error message"
+}
+```
+
+For validation errors, additional details may be included:
+
+```json
+{
+  "detail": [
+    {
+      "loc": ["body", "workflow_id"],
+      "msg": "field required",
+      "type": "value_error.missing"
+    }
+  ]
+}
+```
+
+## Common Errors
+
+### Authentication Errors (401)
+
+<Accordion title="Invalid API Key">
+```json
+{
+  "detail": "Invalid API key"
+}
+```
+
+**Cause**: The provided API key doesn't exist in the system.
+
+**Solution**: Verify your API key is correct and hasn't been revoked.
+</Accordion>
+
+<Accordion title="Inactive API Key">
+```json
+{
+  "detail": "API key is inactive"
+}
+```
+
+**Cause**: The API key exists but has been deactivated.
+
+**Solution**: Reactivate the key in your dashboard or generate a new one.
+</Accordion>
+
+<Accordion title="Missing Authorization Header">
+```json
+{
+  "detail": "Not authenticated"
+}
+```
+
+**Cause**: No Authorization header was provided.
+
+**Solution**: Include the Authorization header with your API key.
+</Accordion>
+
+### Resource Errors (404)
+
+<Accordion title="Workflow Not Found">
+```json
+{
+  "detail": "Workflow not found"
+}
+```
+
+**Cause**: The specified workflow ID doesn't exist or doesn't belong to your account.
+
+**Solution**: Verify the workflow ID and ensure it belongs to your account.
+</Accordion>
+
+<Accordion title="Workflow Run Not Found">
+```json
+{
+  "detail": "Workflow run not found"
+}
+```
+
+**Cause**: The specified run ID doesn't exist or doesn't belong to your account.
+
+**Solution**: Verify the run ID and ensure it belongs to your account.
+</Accordion>
+
+### Permission Errors (403)
+
+<Accordion title="Access Denied">
+```json
+{
+  "detail": "Access denied to this workflow run"
+}
+```
+
+**Cause**: You don't have permission to access the requested resource.
+
+**Solution**: Ensure you're accessing resources that belong to your account.
+</Accordion>
+
+### Rate Limiting (429)
+
+<Accordion title="Rate Limit Exceeded">
+```json
+{
+  "detail": "Rate limit exceeded"
+}
+```
+
+**Cause**: You've exceeded the rate limit for the endpoint.
+
+**Solution**: Implement exponential backoff and retry after the rate limit resets.
+</Accordion>
+
+### Validation Errors (400)
+
+<Accordion title="Invalid Input Parameters">
+```json
+{
+  "detail": "Invalid input parameters for workflow"
+}
+```
+
+**Cause**: The provided input parameters don't match the workflow's schema.
+
+**Solution**: Check the workflow details to see required parameters.
+</Accordion>
+
+<Accordion title="Missing Required Fields">
+```json
+{
+  "detail": [
+    {
+      "loc": ["body", "workflow_id"],
+      "msg": "field required",
+      "type": "value_error.missing"
+    }
+  ]
+}
+```
+
+**Cause**: Required fields are missing from the request.
+
+**Solution**: Include all required fields in your request.
+</Accordion>
+
+## Error Handling Best Practices
+
+### 1. Implement Retry Logic
+
+```python
+import time
+import requests
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
+
+def create_session_with_retries():
+    session = requests.Session()
+    
+    retry_strategy = Retry(
+        total=3,
+        status_forcelist=[429, 500, 502, 503, 504],
+        method_whitelist=["HEAD", "GET", "OPTIONS"],
+        backoff_factor=1
+    )
+    
+    adapter = HTTPAdapter(max_retries=retry_strategy)
+    session.mount("http://", adapter)
+    session.mount("https://", adapter)
+    
+    return session
+
+# Usage
+session = create_session_with_retries()
+response = session.get(
+    'https://api.heytessa.ai/v1/get_workflow_details',
+    headers={'Authorization': f'Bearer {api_key}'}
+)
+```
+
+### 2. Handle Rate Limits
+
+```python
+import time
+import requests
+
+def make_request_with_backoff(url, headers, max_retries=3):
+    for attempt in range(max_retries):
+        response = requests.get(url, headers=headers)
+        
+        if response.status_code == 429:
+            # Rate limited, wait and retry
+            wait_time = 2 ** attempt  # Exponential backoff
+            print(f"Rate limited. Waiting {wait_time} seconds...")
+            time.sleep(wait_time)
+            continue
+        
+        return response
+    
+    raise Exception("Max retries exceeded")
+```
+
+### 3. Comprehensive Error Handling
+
+```python
+import requests
+from typing import Dict, Any
+
+class TesseractAPIError(Exception):
+    def __init__(self, status_code: int, message: str):
+        self.status_code = status_code
+        self.message = message
+        super().__init__(f"API Error {status_code}: {message}")
+
+class TesseractAPI:
+    def __init__(self, api_key: str):
+        self.api_key = api_key
+        self.base_url = "https://api.heytessa.ai/v1"
+        self.headers = {
+            'Authorization': f'Bearer {api_key}',
+            'Content-Type': 'application/json'
+        }
+    
+    def _handle_response(self, response: requests.Response) -> Dict[str, Any]:
+        if response.status_code == 200:
+            return response.json()
+        
+        try:
+            error_data = response.json()
+            error_message = error_data.get('detail', 'Unknown error')
+        except:
+            error_message = response.text or 'Unknown error'
+        
+        if response.status_code == 401:
+            raise TesseractAPIError(401, "Authentication failed. Check your API key.")
+        elif response.status_code == 403:
+            raise TesseractAPIError(403, "Access denied. You don't have permission for this resource.")
+        elif response.status_code == 404:
+            raise TesseractAPIError(404, "Resource not found.")
+        elif response.status_code == 429:
+            raise TesseractAPIError(429, "Rate limit exceeded. Please wait before retrying.")
+        elif response.status_code >= 500:
+            raise TesseractAPIError(response.status_code, "Server error. Please try again later.")
+        else:
+            raise TesseractAPIError(response.status_code, str(error_message))
+    
+    def get_workflows(self):
+        try:
+            response = requests.get(f"{self.base_url}/get_workflow_details", headers=self.headers)
+            return self._handle_response(response)
+        except requests.RequestException as e:
+            raise TesseractAPIError(0, f"Network error: {str(e)}")
+
+# Usage
+try:
+    api = TesseractAPI("your_api_key")
+    workflows = api.get_workflows()
+    print(f"Found {len(workflows)} workflows")
+except TesseractAPIError as e:
+    print(f"API Error: {e}")
+    # Handle specific error cases
+    if e.status_code == 401:
+        print("Please check your API key")
+    elif e.status_code == 429:
+        print("Rate limited. Please wait before retrying")
+```
+
+### 4. Logging and Monitoring
+
+```python
+import logging
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+def make_api_request(url, headers):
+    try:
+        response = requests.get(url, headers=headers)
+        logger.info(f"API request to {url} returned {response.status_code}")
+        
+        if response.status_code != 200:
+            logger.error(f"API error: {response.status_code} - {response.text}")
+        
+        return response
+    except Exception as e:
+        logger.error(f"Request failed: {str(e)}")
+        raise
+```
+
+## Testing Error Scenarios
+
+When developing your integration, test these error scenarios:
+
+1. **Invalid API key**: Use a fake API key to test 401 handling
+2. **Rate limiting**: Make rapid requests to test 429 handling  
+3. **Invalid workflow ID**: Use a non-existent workflow ID to test 404 handling
+4. **Network issues**: Test with network timeouts and connection errors
+5. **Server errors**: Test how your application handles 5xx responses
+
+<Note>
+  Always implement proper error handling and logging in production applications to help with debugging and monitoring.
+</Note> 

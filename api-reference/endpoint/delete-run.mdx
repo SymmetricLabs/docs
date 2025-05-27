@@ -1,0 +1,97 @@
+---
+title: "Delete Workflow Run"
+api: "DELETE /v1/delete_workflow_run/{run_id}"
+description: "Delete a workflow run record from the system"
+---
+
+## Overview
+
+This endpoint permanently deletes a workflow run record from the system. This action removes all associated data including logs, outputs, and execution history.
+
+## Authentication
+
+Requires a valid API key in the Authorization header.
+
+```bash
+Authorization: Bearer YOUR_API_KEY
+```
+
+## Path Parameters
+
+<ParamField path="run_id" type="string" required>
+  The unique identifier of the workflow run to delete
+</ParamField>
+
+## Request Example
+
+```bash
+curl -X DELETE "https://api.heytessa.ai/v1/delete_workflow_run/run_789012" \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+
+## Response
+
+Returns confirmation of the deletion operation.
+
+<ResponseExample>
+```json
+{
+  "status": "success",
+  "message": "Workflow run deleted successfully",
+  "data": {
+    "run_id": "run_789012"
+  }
+}
+```
+</ResponseExample>
+
+## Response Fields
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `status` | string | "success" or "error" |
+| `message` | string | Human-readable status message |
+| `data.run_id` | string | The run ID that was deleted |
+
+## Rate Limiting
+
+- **Limit**: 20 requests per minute per user
+
+## Error Responses
+
+<ResponseExample>
+```json
+{
+  "detail": "Workflow run not found"
+}
+```
+</ResponseExample>
+
+<ResponseExample>
+```json
+{
+  "detail": "Access denied to this workflow run"
+}
+```
+</ResponseExample>
+
+## Use Cases
+
+- **Cleanup**: Remove old or unnecessary workflow run records
+- **Privacy**: Delete runs containing sensitive data
+- **Storage Management**: Free up database space by removing completed runs
+- **Compliance**: Meet data retention requirements
+
+<Warning>
+  This operation is irreversible. Once deleted, the workflow run data cannot be recovered.
+</Warning>
+
+<Note>
+  You can only delete workflow runs that belong to your user account. The API will verify ownership before allowing the deletion.
+</Note>
+
+## Best Practices
+
+- **Backup Important Data**: Export any important outputs before deletion
+- **Batch Operations**: Consider deleting multiple old runs to clean up efficiently
+- **Retention Policy**: Implement a data retention policy for automatic cleanup 

@@ -1,0 +1,100 @@
+---
+title: "Get All Runs"
+api: "GET /v1/get_all_runs"
+description: "Retrieve a list of workflow runs for the authenticated user"
+---
+
+## Overview
+
+This endpoint returns a paginated list of all workflow runs belonging to the authenticated user, ordered by start time (most recent first).
+
+## Authentication
+
+Requires a valid API key in the Authorization header.
+
+```bash
+Authorization: Bearer YOUR_API_KEY
+```
+
+## Query Parameters
+
+<ParamField query="limit" type="integer" default="50">
+  Maximum number of runs to return (1-100)
+</ParamField>
+
+<ParamField query="offset" type="integer" default="0">
+  Number of runs to skip for pagination
+</ParamField>
+
+## Request Example
+
+```bash
+curl -X GET "https://api.heytessa.ai/v1/get_all_runs?limit=20&offset=0" \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+
+## Response
+
+Returns an array of workflow run objects.
+
+<ResponseExample>
+```json
+[
+  {
+    "job_id": "run_789012",
+    "workflow_id": "wf_123456",
+    "workflow_name": "Data Processing Pipeline",
+    "user_id": "user_345678",
+    "run_status": "completed",
+    "started_at": "2024-01-15T10:30:00Z",
+    "ended_at": "2024-01-15T10:45:30Z",
+    "input_params": {
+      "input_file": "/path/to/data.csv",
+      "processing_mode": "advanced"
+    },
+    "output": "Processing completed successfully. 1,234 records processed.",
+    "error_message": null,
+    "current_node_id": "node_final"
+  }
+]
+```
+</ResponseExample>
+
+## Response Fields
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `job_id` | string | Unique identifier for the workflow run |
+| `workflow_id` | string | ID of the workflow that was executed |
+| `workflow_name` | string | Name of the workflow |
+| `user_id` | string | ID of the user who started the workflow |
+| `run_status` | string | Current status of the run |
+| `started_at` | string | When the workflow started (ISO 8601) |
+| `ended_at` | string | When the workflow ended (ISO 8601, null if running) |
+| `input_params` | object | Parameters used to start the workflow |
+| `output` | string | Workflow output (if completed) |
+| `error_message` | string | Error details (if failed) |
+| `current_node_id` | string | Currently executing node |
+
+## Pagination
+
+Use the `limit` and `offset` parameters to paginate through results:
+
+- **First page**: `?limit=20&offset=0`
+- **Second page**: `?limit=20&offset=20`
+- **Third page**: `?limit=20&offset=40`
+
+## Rate Limiting
+
+- **Limit**: 30 requests per minute per user
+
+## Use Cases
+
+- **Run History**: View all past workflow executions
+- **Status Dashboard**: Build a dashboard showing recent workflow activity
+- **Audit Trail**: Track workflow usage and patterns
+- **Debugging**: Find and investigate failed runs
+
+<Note>
+  Results are automatically filtered to show only runs belonging to the authenticated user.
+</Note> 

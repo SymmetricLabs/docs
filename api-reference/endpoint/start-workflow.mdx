@@ -1,0 +1,112 @@
+---
+title: "Start Workflow"
+api: "POST /v1/start_workflow"
+description: "Start a workflow by ID with custom parameters"
+---
+
+## Overview
+
+This endpoint starts a workflow execution with the specified parameters and returns a run ID for tracking the workflow's progress.
+
+## Authentication
+
+Requires a valid API key in the Authorization header.
+
+```bash
+Authorization: Bearer YOUR_API_KEY
+```
+
+## Request Body
+
+<ParamField body="workflow_id" type="string" required>
+  The unique identifier of the workflow to start
+</ParamField>
+
+<ParamField body="version_number" type="integer" default="1">
+  The version number of the workflow to execute
+</ParamField>
+
+<ParamField body="input_params" type="object" default="{}">
+  Key-value pairs of input parameters for the workflow
+</ParamField>
+
+<ParamField body="timezone" type="string">
+  Optional timezone for the workflow execution (e.g., "America/New_York")
+</ParamField>
+
+## Request Example
+
+```bash
+curl -X POST "https://api.heytessa.ai/v1/start_workflow" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "workflow_id": "wf_123456",
+    "version_number": 1,
+    "input_params": {
+      "input_file": "/path/to/data.csv",
+      "processing_mode": "advanced"
+    },
+    "timezone": "America/New_York"
+  }'
+```
+
+## Response
+
+Returns the workflow run details upon successful start.
+
+<ResponseExample>
+```json
+{
+  "status": "success",
+  "message": "Workflow started successfully",
+  "data": {
+    "run_id": "run_789012",
+    "workflow_id": "wf_123456",
+    "user_id": "user_345678"
+  }
+}
+```
+</ResponseExample>
+
+## Response Fields
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `status` | string | "success" or "error" |
+| `message` | string | Human-readable status message |
+| `data.run_id` | string | Unique identifier for this workflow run |
+| `data.workflow_id` | string | The workflow that was started |
+| `data.user_id` | string | The user who started the workflow |
+
+## Rate Limiting
+
+- **Limit**: 10 requests per minute per user
+
+## Error Responses
+
+<ResponseExample>
+```json
+{
+  "detail": "Workflow not found"
+}
+```
+</ResponseExample>
+
+<ResponseExample>
+```json
+{
+  "detail": "Invalid input parameters"
+}
+```
+</ResponseExample>
+
+## Use Cases
+
+- **Automated Processing**: Start data processing workflows programmatically
+- **Scheduled Execution**: Trigger workflows based on external events
+- **Batch Operations**: Start multiple workflow instances with different parameters
+
+<Warning>
+  Ensure all required input parameters are provided according to the workflow's schema. Use the Get Workflow Details endpoint to retrieve parameter requirements.
+</Warning>

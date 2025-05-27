@@ -1,0 +1,314 @@
+---
+title: "API Quickstart"
+description: "Get started with the Tesseract Workflow API in minutes"
+---
+
+## Quick Start Guide
+
+This guide will help you make your first API call to the Tesseract Workflow API and start executing workflows programmatically.
+
+## Prerequisites
+
+- A Tesseract account with API access
+- An active API key
+- A workflow created in your Tesseract dashboard
+
+## Step 1: Get Your API Key
+
+First, obtain your API key from the Tesseract dashboard. You'll need this for all API requests.
+
+<CodeGroup>
+```bash Environment Variable
+export TESSERACT_API_KEY="your_api_key_here"
+```
+
+```python Python
+import os
+api_key = os.getenv('TESSERACT_API_KEY')
+```
+
+```javascript JavaScript
+const apiKey = process.env.TESSERACT_API_KEY;
+```
+</CodeGroup>
+
+## Step 2: Test the Connection
+
+Start by testing the health endpoint to ensure the API is accessible:
+
+<CodeGroup>
+```bash cURL
+curl -X GET "https://api.heytessa.ai/v1/health"
+```
+
+```python Python
+import requests
+
+response = requests.get('https://api.heytessa.ai/v1/health')
+print(response.json())
+```
+
+```javascript JavaScript
+const response = await fetch('https://api.heytessa.ai/v1/health');
+const data = await response.json();
+console.log(data);
+```
+</CodeGroup>
+
+## Step 3: List Available Workflows
+
+Discover what workflows are available in your account:
+
+<CodeGroup>
+```bash cURL
+curl -X GET "https://api.heytessa.ai/v1/get_workflow_details" \
+  -H "Authorization: Bearer $TESSERACT_API_KEY"
+```
+
+```python Python
+import requests
+
+headers = {'Authorization': f'Bearer {api_key}'}
+response = requests.get(
+    'https://api.heytessa.ai/v1/get_workflow_details',
+    headers=headers
+)
+workflows = response.json()
+print(f"Found {len(workflows)} workflows")
+```
+
+```javascript JavaScript
+const headers = {
+  'Authorization': `Bearer ${apiKey}`
+};
+
+const response = await fetch(
+  'https://api.heytessa.ai/v1/get_workflow_details',
+  { headers }
+);
+const workflows = await response.json();
+console.log(`Found ${workflows.length} workflows`);
+```
+</CodeGroup>
+
+## Step 4: Start a Workflow
+
+Execute a workflow with custom parameters:
+
+<CodeGroup>
+```bash cURL
+curl -X POST "https://api.heytessa.ai/v1/start_workflow" \
+  -H "Authorization: Bearer $TESSERACT_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "workflow_id": "your_workflow_id",
+    "version_number": 1,
+    "input_params": {
+      "param1": "value1",
+      "param2": "value2"
+    }
+  }'
+```
+
+```python Python
+import requests
+
+headers = {
+    'Authorization': f'Bearer {api_key}',
+    'Content-Type': 'application/json'
+}
+
+data = {
+    'workflow_id': 'your_workflow_id',
+    'version_number': 1,
+    'input_params': {
+        'param1': 'value1',
+        'param2': 'value2'
+    }
+}
+
+response = requests.post(
+    'https://api.heytessa.ai/v1/start_workflow',
+    headers=headers,
+    json=data
+)
+
+result = response.json()
+run_id = result['data']['run_id']
+print(f"Workflow started with run ID: {run_id}")
+```
+
+```javascript JavaScript
+const headers = {
+  'Authorization': `Bearer ${apiKey}`,
+  'Content-Type': 'application/json'
+};
+
+const data = {
+  workflow_id: 'your_workflow_id',
+  version_number: 1,
+  input_params: {
+    param1: 'value1',
+    param2: 'value2'
+  }
+};
+
+const response = await fetch(
+  'https://api.heytessa.ai/v1/start_workflow',
+  {
+    method: 'POST',
+    headers,
+    body: JSON.stringify(data)
+  }
+);
+
+const result = await response.json();
+const runId = result.data.run_id;
+console.log(`Workflow started with run ID: ${runId}`);
+```
+</CodeGroup>
+
+## Step 5: Monitor Progress
+
+Check the status of your running workflow:
+
+<CodeGroup>
+```bash cURL
+curl -X GET "https://api.heytessa.ai/v1/get_workflow_status/your_run_id" \
+  -H "Authorization: Bearer $TESSERACT_API_KEY"
+```
+
+```python Python
+import time
+
+def wait_for_completion(run_id, api_key):
+    headers = {'Authorization': f'Bearer {api_key}'}
+    
+    while True:
+        response = requests.get(
+            f'https://api.heytessa.ai/v1/get_workflow_status/{run_id}',
+            headers=headers
+        )
+        status = response.json()
+        
+        print(f"Status: {status['status']}")
+        
+        if status['status'] in ['completed', 'failed', 'stopped']:
+            return status
+            
+        time.sleep(5)  # Wait 5 seconds before checking again
+
+# Usage
+final_status = wait_for_completion(run_id, api_key)
+print(f"Final status: {final_status['status']}")
+if final_status['output']:
+    print(f"Output: {final_status['output']}")
+```
+
+```javascript JavaScript
+async function waitForCompletion(runId, apiKey) {
+  const headers = { 'Authorization': `Bearer ${apiKey}` };
+  
+  while (true) {
+    const response = await fetch(
+      `https://api.heytessa.ai/v1/get_workflow_status/${runId}`,
+      { headers }
+    );
+    const status = await response.json();
+    
+    console.log(`Status: ${status.status}`);
+    
+    if (['completed', 'failed', 'stopped'].includes(status.status)) {
+      return status;
+    }
+    
+    await new Promise(resolve => setTimeout(resolve, 5000));
+  }
+}
+
+// Usage
+const finalStatus = await waitForCompletion(runId, apiKey);
+console.log(`Final status: ${finalStatus.status}`);
+if (finalStatus.output) {
+  console.log(`Output: ${finalStatus.output}`);
+}
+```
+</CodeGroup>
+
+## Complete Example
+
+Here's a complete example that demonstrates the full workflow:
+
+<CodeGroup>
+```python Python Complete Example
+import os
+import requests
+import time
+
+class TesseractAPI:
+    def __init__(self, api_key, base_url="https://api.heytessa.ai/v1"):
+        self.api_key = api_key
+        self.base_url = base_url
+        self.headers = {
+            'Authorization': f'Bearer {api_key}',
+            'Content-Type': 'application/json'
+        }
+    
+    def get_workflows(self):
+        response = requests.get(f"{self.base_url}/get_workflow_details", headers=self.headers)
+        return response.json()
+    
+    def start_workflow(self, workflow_id, input_params=None, version=1):
+        data = {
+            'workflow_id': workflow_id,
+            'version_number': version,
+            'input_params': input_params or {}
+        }
+        response = requests.post(f"{self.base_url}/start_workflow", headers=self.headers, json=data)
+        return response.json()
+    
+    def get_status(self, run_id):
+        response = requests.get(f"{self.base_url}/get_workflow_status/{run_id}", headers=self.headers)
+        return response.json()
+    
+    def wait_for_completion(self, run_id, poll_interval=5):
+        while True:
+            status = self.get_status(run_id)
+            print(f"Status: {status['status']}")
+            
+            if status['status'] in ['completed', 'failed', 'stopped']:
+                return status
+            
+            time.sleep(poll_interval)
+
+# Usage
+api = TesseractAPI(os.getenv('TESSERACT_API_KEY'))
+
+# List workflows
+workflows = api.get_workflows()
+print(f"Available workflows: {len(workflows)}")
+
+# Start a workflow
+if workflows:
+    workflow_id = workflows[0]['workflow_id']
+    result = api.start_workflow(workflow_id, {'param1': 'value1'})
+    run_id = result['data']['run_id']
+    
+    # Wait for completion
+    final_status = api.wait_for_completion(run_id)
+    print(f"Workflow completed with status: {final_status['status']}")
+```
+</CodeGroup>
+
+## Next Steps
+
+Now that you've successfully made your first API calls:
+
+1. **Explore Endpoints**: Check out all available endpoints in the API reference
+2. **Error Handling**: Implement proper error handling for production use
+3. **Rate Limiting**: Be aware of rate limits and implement appropriate backoff strategies
+4. **Webhooks**: Consider using webhooks for real-time workflow status updates (if available)
+
+<Note>
+  Remember to handle errors gracefully and respect rate limits in your production applications.
+</Note> 

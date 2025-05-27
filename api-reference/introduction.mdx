@@ -1,33 +1,74 @@
 ---
-title: 'Introduction'
-description: 'Example section for showcasing API endpoints'
+title: 'Tesseract Workflow API'
+description: 'Complete API reference for managing and executing workflows'
 ---
 
-<Note>
-  If you're not looking to build API reference documentation, you can delete
-  this section by removing the api-reference folder.
-</Note>
+## Welcome to Tesseract Workflow API
 
-## Welcome
+The Tesseract Workflow API provides a comprehensive set of endpoints for managing and executing automated workflows. This RESTful API allows you to:
 
-There are two ways to build API documentation: [OpenAPI](https://mintlify.com/docs/api-playground/openapi/setup) and [MDX components](https://mintlify.com/docs/api-playground/mdx/configuration). For the starter kit, we are using the following OpenAPI specification.
+- **Start and stop workflows** by ID with custom parameters
+- **Monitor workflow execution** in real-time
+- **Retrieve workflow details** including input/output schemas
+- **Manage workflow runs** with full CRUD operations
 
 <Card
-  title="Plant Store Endpoints"
-  icon="leaf"
-  href="https://github.com/mintlify/starter/blob/main/api-reference/openapi.json"
+  title="Base URL"
+  icon="globe"
 >
-  View the OpenAPI specification file
+  `https://api.heytessa.ai/v1`
 </Card>
 
 ## Authentication
 
-All API endpoints are authenticated using Bearer tokens and picked up from the specification file.
+All API endpoints require authentication using API keys. Include your API key in the Authorization header:
+
+```bash
+Authorization: Bearer YOUR_API_KEY
+```
+
+<Warning>
+  API keys are tied to specific users and provide access only to workflows and runs belonging to that user.
+</Warning>
+
+## Rate Limiting
+
+The API implements rate limiting to ensure fair usage:
+
+- **Health check**: 10 requests per minute
+- **Workflow details**: 30 requests per minute  
+- **Start workflow**: 10 requests per minute
+- **Stop workflow**: 20 requests per minute
+- **Get runs**: 30 requests per minute
+- **Get status**: 60 requests per minute
+- **Delete run**: 20 requests per minute
+
+## Response Format
+
+All API responses follow a consistent format:
 
 ```json
-"security": [
-  {
-    "bearerAuth": []
+{
+  "status": "success|error",
+  "message": "Human readable message",
+  "data": {
+    // Response data object
   }
-]
+}
 ```
+
+## Error Handling
+
+The API uses standard HTTP status codes:
+
+- `200` - Success
+- `400` - Bad Request
+- `401` - Unauthorized (Invalid API key)
+- `403` - Forbidden (Access denied)
+- `404` - Not Found
+- `429` - Too Many Requests (Rate limit exceeded)
+- `500` - Internal Server Error
+
+<Note>
+  All timestamps in the API are returned in ISO 8601 format (e.g., `2024-01-15T10:30:00Z`).
+</Note>
