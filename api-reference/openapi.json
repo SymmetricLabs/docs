@@ -1,16 +1,14 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "OpenAPI Plant Store",
-    "description": "A sample API that uses a plant store as an example to demonstrate features in the OpenAPI specification",
-    "license": {
-      "name": "MIT"
-    },
-    "version": "1.0.0"
+    "title": "Tesseract Workflow API",
+    "version": "1.0.0",
+    "description": "API for managing and executing automated workflows"
   },
   "servers": [
     {
-      "url": "http://sandbox.mintlify.com"
+      "url": "https://api.heytessa.ai/v1",
+      "description": "Production server"
     }
   ],
   "security": [
@@ -19,76 +17,30 @@
     }
   ],
   "paths": {
-    "/plants": {
+    "/health": {
       "get": {
-        "description": "Returns all plants from the system that the user has access to",
-        "parameters": [
-          {
-            "name": "limit",
-            "in": "query",
-            "description": "The maximum number of results to return",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
+        "summary": "Health Check",
+        "description": "Check the health status of the API server",
+        "tags": ["Health"],
+        "security": [],
         "responses": {
           "200": {
-            "description": "Plant response",
+            "description": "Server is healthy",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Plant"
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "healthy"
+                    },
+                    "timestamp": {
+                      "type": "string",
+                      "format": "date-time",
+                      "example": "2024-01-15T10:30:00.123456"
+                    }
                   }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Unexpected error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "description": "Creates a new plant in the store",
-        "requestBody": {
-          "description": "Plant to add to the store",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/NewPlant"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "plant response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Plant"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "unexpected error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
                 }
               }
             }
@@ -96,122 +48,556 @@
         }
       }
     },
-    "/plants/{id}": {
-      "delete": {
-        "description": "Deletes a single plant based on the ID supplied",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID of plant to delete",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            }
-          }
-        ],
+    "/get_workflow_details": {
+      "get": {
+        "summary": "Get Workflow Details",
+        "description": "Retrieve details of all available workflows including input/output schemas",
+        "tags": ["Workflows"],
         "responses": {
-          "204": {
-            "description": "Plant deleted",
-            "content": {}
-          },
-          "400": {
-            "description": "unexpected error",
+          "200": {
+            "description": "List of workflow details",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Error"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/WorkflowDetails"
+                  }
                 }
               }
             }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
           }
         }
       }
-    }
-  },
-  "webhooks": {
-    "/plant/webhook": {
+    },
+    "/start_workflow": {
       "post": {
-        "description": "Information about a new plant added to the store",
+        "summary": "Start Workflow",
+        "description": "Start a workflow by ID with custom parameters",
+        "tags": ["Workflows"],
         "requestBody": {
-          "description": "Plant added to the store",
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/NewPlant"
+                "$ref": "#/components/schemas/StartWorkflowRequest"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Return a 200 status to indicate that the data was received successfully"
+            "description": "Workflow started successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/stop_workflow/{run_id}": {
+      "post": {
+        "summary": "Stop Workflow",
+        "description": "Stop a running workflow by run ID",
+        "tags": ["Workflows"],
+        "parameters": [
+          {
+            "name": "run_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The unique identifier of the workflow run to stop"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Workflow stopped successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/get_all_runs": {
+      "get": {
+        "summary": "Get All Runs",
+        "description": "Retrieve a list of workflow runs for the authenticated user",
+        "tags": ["Workflow Runs"],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 50,
+              "minimum": 1,
+              "maximum": 100
+            },
+            "description": "Maximum number of runs to return"
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 0,
+              "minimum": 0
+            },
+            "description": "Number of runs to skip for pagination"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of workflow runs",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/WorkflowRun"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/get_workflow_status/{run_id}": {
+      "get": {
+        "summary": "Get Workflow Status",
+        "description": "Get the current status and output of a specific workflow run",
+        "tags": ["Workflow Runs"],
+        "parameters": [
+          {
+            "name": "run_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The unique identifier of the workflow run to check"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Workflow status details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkflowStatus"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/delete_workflow_run/{run_id}": {
+      "delete": {
+        "summary": "Delete Workflow Run",
+        "description": "Delete a workflow run record from the system",
+        "tags": ["Workflow Runs"],
+        "parameters": [
+          {
+            "name": "run_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The unique identifier of the workflow run to delete"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Workflow run deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
           }
         }
       }
     }
   },
   "components": {
-    "schemas": {
-      "Plant": {
-        "required": [
-          "name"
-        ],
-        "type": "object",
-        "properties": {
-          "name": {
-            "description": "The name of the plant",
-            "type": "string"
-          },
-          "tag": {
-            "description": "Tag to specify the type",
-            "type": "string"
-          }
-        }
-      },
-      "NewPlant": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/Plant"
-          },
-          {
-            "required": [
-              "id"
-            ],
-            "type": "object",
-            "properties": {
-              "id": {
-                "description": "Identification number of the plant",
-                "type": "integer",
-                "format": "int64"
-              }
-            }
-          }
-        ]
-      },
-      "Error": {
-        "required": [
-          "error",
-          "message"
-        ],
-        "type": "object",
-        "properties": {
-          "error": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "message": {
-            "type": "string"
-          }
-        }
-      }
-    },
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "scheme": "bearer"
+        "scheme": "bearer",
+        "bearerFormat": "API Key"
+      }
+    },
+    "schemas": {
+      "WorkflowDetails": {
+        "type": "object",
+        "properties": {
+          "workflow_id": {
+            "type": "string",
+            "description": "Unique identifier for the workflow"
+          },
+          "workflow_name": {
+            "type": "string",
+            "description": "Human-readable name of the workflow"
+          },
+          "version_number": {
+            "type": "integer",
+            "description": "Version number of the workflow"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true,
+            "description": "Optional description of the workflow"
+          },
+          "input_parameters": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/InputParameter"
+            },
+            "description": "Array of input parameter definitions"
+          },
+          "initial_url": {
+            "type": "string",
+            "nullable": true,
+            "description": "Optional initial URL for the workflow"
+          }
+        },
+        "required": ["workflow_id", "workflow_name", "version_number"]
+      },
+      "InputParameter": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Parameter name"
+          },
+          "type": {
+            "type": "string",
+            "description": "Data type (string, integer, boolean, etc.)"
+          },
+          "required": {
+            "type": "boolean",
+            "description": "Whether the parameter is required"
+          },
+          "description": {
+            "type": "string",
+            "description": "Parameter description"
+          },
+          "default": {
+            "description": "Default value (if not required)"
+          },
+          "options": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Valid options (for enum-type parameters)"
+          }
+        }
+      },
+      "StartWorkflowRequest": {
+        "type": "object",
+        "properties": {
+          "workflow_id": {
+            "type": "string",
+            "description": "The unique identifier of the workflow to start"
+          },
+          "version_number": {
+            "type": "integer",
+            "default": 1,
+            "description": "The version number of the workflow to execute"
+          },
+          "input_params": {
+            "type": "object",
+            "additionalProperties": true,
+            "description": "Key-value pairs of input parameters for the workflow"
+          },
+          "timezone": {
+            "type": "string",
+            "nullable": true,
+            "description": "Optional timezone for the workflow execution"
+          }
+        },
+        "required": ["workflow_id"]
+      },
+      "WorkflowRun": {
+        "type": "object",
+        "properties": {
+          "job_id": {
+            "type": "string",
+            "description": "Unique identifier for the workflow run"
+          },
+          "workflow_id": {
+            "type": "string",
+            "description": "ID of the workflow that was executed"
+          },
+          "workflow_name": {
+            "type": "string",
+            "description": "Name of the workflow"
+          },
+          "user_id": {
+            "type": "string",
+            "description": "ID of the user who started the workflow"
+          },
+          "run_status": {
+            "type": "string",
+            "enum": ["running", "completed", "failed", "stopped"],
+            "description": "Current status of the run"
+          },
+          "started_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When the workflow started"
+          },
+          "ended_at": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "When the workflow ended (null if running)"
+          },
+          "input_params": {
+            "type": "object",
+            "additionalProperties": true,
+            "description": "Parameters used to start the workflow"
+          },
+          "output": {
+            "type": "string",
+            "nullable": true,
+            "description": "Workflow output (if completed)"
+          },
+          "error_message": {
+            "type": "string",
+            "nullable": true,
+            "description": "Error details (if failed)"
+          },
+          "current_node_id": {
+            "type": "string",
+            "nullable": true,
+            "description": "Currently executing node"
+          }
+        },
+        "required": ["job_id", "workflow_id", "workflow_name", "user_id", "run_status", "started_at"]
+      },
+      "WorkflowStatus": {
+        "type": "object",
+        "properties": {
+          "job_id": {
+            "type": "string",
+            "description": "The workflow run identifier"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["running", "completed", "failed", "stopped"],
+            "description": "Current status of the workflow"
+          },
+          "output": {
+            "type": "string",
+            "nullable": true,
+            "description": "Workflow output or results (if available)"
+          },
+          "error_message": {
+            "type": "string",
+            "nullable": true,
+            "description": "Error details if the workflow failed"
+          },
+          "current_node_id": {
+            "type": "string",
+            "nullable": true,
+            "description": "ID of the currently executing node"
+          },
+          "started_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Workflow start timestamp"
+          },
+          "ended_at": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "Workflow end timestamp (null if still running)"
+          }
+        },
+        "required": ["job_id", "status", "started_at"]
+      },
+      "APIResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": ["success", "error"],
+            "description": "Response status"
+          },
+          "message": {
+            "type": "string",
+            "nullable": true,
+            "description": "Human-readable status message"
+          },
+          "data": {
+            "type": "object",
+            "nullable": true,
+            "description": "Response data object"
+          }
+        },
+        "required": ["status"]
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "detail": {
+            "type": "string",
+            "description": "Error message"
+          }
+        },
+        "required": ["detail"]
+      }
+    },
+    "responses": {
+      "BadRequest": {
+        "description": "Bad Request",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "Unauthorized": {
+        "description": "Unauthorized - Invalid or missing API key",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "Forbidden": {
+        "description": "Forbidden - Access denied to resource",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "NotFound": {
+        "description": "Not Found - Resource not found",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "TooManyRequests": {
+        "description": "Too Many Requests - Rate limit exceeded",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "InternalServerError": {
+        "description": "Internal Server Error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
       }
     }
-  }
+  },
+  "tags": [
+    {
+      "name": "Health",
+      "description": "Health check endpoints"
+    },
+    {
+      "name": "Workflows",
+      "description": "Workflow management endpoints"
+    },
+    {
+      "name": "Workflow Runs",
+      "description": "Workflow execution and monitoring endpoints"
+    }
+  ]
 }
