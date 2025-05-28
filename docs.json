@@ -47,7 +47,8 @@
               "group": "Workflow Management",
               "pages": [
                 "api-reference/endpoint/stop-workflow",
-                "api-reference/endpoint/get-all-runs",
+                "api-reference/endpoint/get-all-running-jobs",
+                "api-reference/endpoint/get-all-past-jobs",
                 "api-reference/endpoint/delete-run"
               ]
             }

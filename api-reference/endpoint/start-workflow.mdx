@@ -6,7 +6,7 @@ description: "Start a workflow by ID with custom parameters"
 
 ## Overview
 
-This endpoint starts a workflow execution with the specified parameters and returns a run ID for tracking the workflow's progress.
+This endpoint starts a workflow execution with the specified parameters and returns a job ID for tracking the workflow's progress.
 
 ## Authentication
 
@@ -61,7 +61,7 @@ Returns the workflow run details upon successful start.
   "status": "success",
   "message": "Workflow started successfully",
   "data": {
-    "run_id": "run_789012",
+    "job_id": "run_789012",
     "workflow_id": "wf_123456",
     "user_id": "user_345678"
   }
@@ -75,7 +75,7 @@ Returns the workflow run details upon successful start.
 |-------|------|-------------|
 | `status` | string | "success" or "error" |
 | `message` | string | Human-readable status message |
-| `data.run_id` | string | Unique identifier for this workflow run |
+| `data.job_id` | string | Unique identifier for this workflow run |
 | `data.workflow_id` | string | The workflow that was started |
 | `data.user_id` | string | The user who started the workflow |
 

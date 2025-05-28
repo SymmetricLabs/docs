@@ -1,6 +1,6 @@
 ---
 title: "Get Workflow Status"
-api: "GET /v1/get_workflow_status/{run_id}"
+api: "GET /v1/get_workflow_status/{job_id}"
 description: "Get the current status and output of a specific workflow run"
 ---
 
@@ -18,7 +18,7 @@ Authorization: Bearer YOUR_API_KEY
 
 ## Path Parameters
 
-<ParamField path="run_id" type="string" required>
+<ParamField path="job_id" type="string" required>
   The unique identifier of the workflow run to check
 </ParamField>
 

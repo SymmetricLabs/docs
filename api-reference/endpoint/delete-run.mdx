@@ -1,6 +1,6 @@
 ---
 title: "Delete Workflow Run"
-api: "DELETE /v1/delete_workflow_run/{run_id}"
+api: "DELETE /v1/delete_workflow_run/{job_id}"
 description: "Delete a workflow run record from the system"
 ---
 
@@ -18,7 +18,7 @@ Authorization: Bearer YOUR_API_KEY
 
 ## Path Parameters
 
-<ParamField path="run_id" type="string" required>
+<ParamField path="job_id" type="string" required>
   The unique identifier of the workflow run to delete
 </ParamField>
 
@@ -39,7 +39,7 @@ Returns confirmation of the deletion operation.
   "status": "success",
   "message": "Workflow run deleted successfully",
   "data": {
-    "run_id": "run_789012"
+    "job_id": "run_789012"
   }
 }
 ```
@@ -51,7 +51,7 @@ Returns confirmation of the deletion operation.
 |-------|------|-------------|
 | `status` | string | "success" or "error" |
 | `message` | string | Human-readable status message |
-| `data.run_id` | string | The run ID that was deleted |
+| `data.job_id` | string | The job ID that was deleted |
 
 ## Rate Limiting
 

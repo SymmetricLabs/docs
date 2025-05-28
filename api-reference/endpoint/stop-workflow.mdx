@@ -1,7 +1,7 @@
 ---
 title: "Stop Workflow"
-api: "POST /v1/stop_workflow/{run_id}"
-description: "Stop a running workflow by run ID"
+api: "POST /v1/stop_workflow/{job_id}"
+description: "Stop a running workflow by job ID"
 ---
 
 ## Overview
@@ -18,7 +18,7 @@ Authorization: Bearer YOUR_API_KEY
 
 ## Path Parameters
 
-<ParamField path="run_id" type="string" required>
+<ParamField path="job_id" type="string" required>
   The unique identifier of the workflow run to stop
 </ParamField>
 
@@ -39,7 +39,7 @@ Returns confirmation of the stop operation.
   "status": "success",
   "message": "Workflow stopped successfully",
   "data": {
-    "run_id": "run_789012"
+    "job_id": "run_789012"
   }
 }
 ```
@@ -51,7 +51,7 @@ Returns confirmation of the stop operation.
 |-------|------|-------------|
 | `status` | string | "success" or "error" |
 | `message` | string | Human-readable status message |
-| `data.run_id` | string | The run ID that was stopped |
+| `data.job_id` | string | The job ID that was stopped |
 
 ## Rate Limiting
 
