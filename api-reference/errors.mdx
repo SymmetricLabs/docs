@@ -5,7 +5,7 @@ description: "Understanding and handling API errors effectively"
 
 ## Overview
 
-The Tesseract Workflow API uses conventional HTTP response codes to indicate the success or failure of an API request. This guide covers all possible error scenarios and how to handle them.
+The Tessa Workflow API uses conventional HTTP response codes to indicate the success or failure of an API request. This guide covers all possible error scenarios and how to handle them.
 
 ## HTTP Status Codes
 
@@ -231,13 +231,13 @@ def make_request_with_backoff(url, headers, max_retries=3):
 import requests
 from typing import Dict, Any
 
-class TesseractAPIError(Exception):
+class TessaAPIError(Exception):
     def __init__(self, status_code: int, message: str):
         self.status_code = status_code
         self.message = message
         super().__init__(f"API Error {status_code}: {message}")
 
-class TesseractAPI:
+class TessaAPI:
     def __init__(self, api_key: str):
         self.api_key = api_key
         self.base_url = "https://api.heytessa.ai/v1"
@@ -257,31 +257,31 @@ class TesseractAPI:
             error_message = response.text or 'Unknown error'
         
         if response.status_code == 401:
-            raise TesseractAPIError(401, "Authentication failed. Check your API key.")
+            raise TessaAPIError(401, "Authentication failed. Check your API key.")
         elif response.status_code == 403:
-            raise TesseractAPIError(403, "Access denied. You don't have permission for this resource.")
+            raise TessaAPIError(403, "Access denied. You don't have permission for this resource.")
         elif response.status_code == 404:
-            raise TesseractAPIError(404, "Resource not found.")
+            raise TessaAPIError(404, "Resource not found.")
         elif response.status_code == 429:
-            raise TesseractAPIError(429, "Rate limit exceeded. Please wait before retrying.")
+            raise TessaAPIError(429, "Rate limit exceeded. Please wait before retrying.")
         elif response.status_code >= 500:
-            raise TesseractAPIError(response.status_code, "Server error. Please try again later.")
+            raise TessaAPIError(response.status_code, "Server error. Please try again later.")
         else:
-            raise TesseractAPIError(response.status_code, str(error_message))
+            raise TessaAPIError(response.status_code, str(error_message))
     
     def get_workflows(self):
         try:
             response = requests.get(f"{self.base_url}/get_workflow_details", headers=self.headers)
             return self._handle_response(response)
         except requests.RequestException as e:
-            raise TesseractAPIError(0, f"Network error: {str(e)}")
+            raise TessaAPIError(0, f"Network error: {str(e)}")
 
 # Usage
 try:
-    api = TesseractAPI("your_api_key")
+    api = TessaAPI("your_api_key")
     workflows = api.get_workflows()
     print(f"Found {len(workflows)} workflows")
-except TesseractAPIError as e:
+except TessaAPIError as e:
     print(f"API Error: {e}")
     # Handle specific error cases
     if e.status_code == 401:

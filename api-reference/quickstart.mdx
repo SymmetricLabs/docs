@@ -1,30 +1,30 @@
 ---
 title: "Quickstart"
-description: "Get started with the Tesseract Workflow API in minutes"
+description: "Get started with the Tessa Workflow API in minutes"
 ---
 
 ## Prerequisites
 
-- A Tesseract account with API access
+- A Tessa account with API access
 - An active API key
-- A workflow created in your Tesseract dashboard
+- A workflow created in your Tessa dashboard
 
 ## Step 1: Get Your API Key
 
-First, obtain your API key from the Tesseract dashboard. You'll need this for all API requests.
+First, obtain your API key from the Tessa dashboard. You'll need this for all API requests.
 
 <CodeGroup>
 ```bash Environment Variable
-export TESSERACT_API_KEY="your_api_key_here"
+export TESSA_API_KEY="your_api_key_here"
 ```
 
 ```python Python
 import os
-api_key = os.getenv('TESSERACT_API_KEY')
+api_key = os.getenv('TESSA_API_KEY')
 ```
 
 ```javascript JavaScript
-const apiKey = process.env.TESSERACT_API_KEY;
+const apiKey = process.env.TESSA_API_KEY;
 ```
 </CodeGroup>
 
@@ -58,7 +58,7 @@ Discover what workflows are available in your account:
 <CodeGroup>
 ```bash cURL
 curl -X GET "https://api.heytessa.ai/v1/get_workflow_details" \
-  -H "Authorization: Bearer $TESSERACT_API_KEY"
+  -H "Authorization: Bearer $TESSA_API_KEY"
 ```
 
 ```python Python
@@ -94,7 +94,7 @@ Execute a workflow with custom parameters:
 <CodeGroup>
 ```bash cURL
 curl -X POST "https://api.heytessa.ai/v1/start_workflow" \
-  -H "Authorization: Bearer $TESSERACT_API_KEY" \
+  -H "Authorization: Bearer $TESSA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "workflow_id": "your_workflow_id",
@@ -171,7 +171,7 @@ Check the status of your running workflow:
 <CodeGroup>
 ```bash cURL
 curl -X GET "https://api.heytessa.ai/v1/get_workflow_status/your_job_id" \
-  -H "Authorization: Bearer $TESSERACT_API_KEY"
+  -H "Authorization: Bearer $TESSA_API_KEY"
 ```
 
 ```python Python
@@ -241,7 +241,7 @@ import os
 import requests
 import time
 
-class TesseractAPI:
+class TessaAPI:
     def __init__(self, api_key, base_url="https://api.heytessa.ai/v1"):
         self.api_key = api_key
         self.base_url = base_url
@@ -278,7 +278,7 @@ class TesseractAPI:
             time.sleep(poll_interval)
 
 # Usage
-api = TesseractAPI(os.getenv('TESSERACT_API_KEY'))
+api = TessaAPI(os.getenv('TESSA_API_KEY'))
 
 # List workflows
 workflows = api.get_workflows()

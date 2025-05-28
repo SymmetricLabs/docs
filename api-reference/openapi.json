@@ -1,7 +1,7 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "Tesseract Workflow API",
+    "title": "Tessa Workflow API",
     "version": "1.0.0",
     "description": "API for managing and executing automated workflows"
   },
