@@ -61,12 +61,12 @@
     "global": {
       "anchors": [
         {
-          "anchor": "Tessa.ai",
+          "anchor": "Homepage | heytessa.ai",
           "href": "https://www.heytessa.ai",
           "icon": "cube"
         },
         {
-          "anchor": "General Agency",
+          "anchor": "Company | General Agency",
           "href": "https://generalagency.ai",
           "icon": "globe"
         }
@@ -81,7 +81,7 @@
     "links": [
       {
         "label": "Support",
-        "href": "mailto:mo@generalagency.ai"
+        "href": "mailto:founders@generalagency.ai"
       }
     ]
   },
