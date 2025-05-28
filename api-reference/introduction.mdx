@@ -1,5 +1,5 @@
 ---
-title: 'Tesseract Workflow API'
+title: 'Workflow API'
 description: 'Complete API reference for managing and executing workflows'
 ---
 
@@ -12,36 +12,23 @@ The Tesseract Workflow API provides a comprehensive set of endpoints for managin
 - **Retrieve workflow details** including input/output schemas
 - **Manage workflow runs** with full CRUD operations
 
+<img
+  className="block dark:hidden"
+  src="/images/hero-light.png"
+  alt="Tesseract API Light"
+/>
+<img
+  className="hidden dark:block"
+  src="/images/hero-dark.png"
+  alt="Tesseract API Dark"
+/>
+
 <Card
   title="Base URL"
   icon="globe"
 >
   `https://api.heytessa.ai/v1`
 </Card>
-
-## Authentication
-
-All API endpoints require authentication using API keys. Include your API key in the Authorization header:
-
-```bash
-Authorization: Bearer YOUR_API_KEY
-```
-
-<Warning>
-  API keys are tied to specific users and provide access only to workflows and runs belonging to that user.
-</Warning>
-
-## Rate Limiting
-
-The API implements rate limiting to ensure fair usage:
-
-- **Health check**: 10 requests per minute
-- **Workflow details**: 30 requests per minute  
-- **Start workflow**: 10 requests per minute
-- **Stop workflow**: 20 requests per minute
-- **Get runs**: 30 requests per minute
-- **Get status**: 60 requests per minute
-- **Delete run**: 20 requests per minute
 
 ## Response Format
 
@@ -56,19 +43,3 @@ All API responses follow a consistent format:
   }
 }
 ```
-
-## Error Handling
-
-The API uses standard HTTP status codes:
-
-- `200` - Success
-- `400` - Bad Request
-- `401` - Unauthorized (Invalid API key)
-- `403` - Forbidden (Access denied)
-- `404` - Not Found
-- `429` - Too Many Requests (Rate limit exceeded)
-- `500` - Internal Server Error
-
-<Note>
-  All timestamps in the API are returned in ISO 8601 format (e.g., `2024-01-15T10:30:00Z`).
-</Note>

@@ -3,9 +3,9 @@
   "theme": "mint",
   "name": "Tesseract Workflow API",
   "colors": {
-    "primary": "#DE4B98",
-    "light": "#DE4B98",
-    "dark": "#DE4B98"
+    "primary": "#D74A97",
+    "light": "#D74A97",
+    "dark": "#D74A97"
   },
   "favicon": "/favicon.svg",
   "navigation": {
@@ -14,10 +14,12 @@
         "tab": "Guides",
         "groups": [
           {
-            "group": "Get Started",
+            "group": "Getting Started",
             "pages": [
               "index",
-              "quickstart"
+              "quickstart",
+              "examples",
+              "integrations"
             ]
           }
         ]
@@ -29,8 +31,9 @@
               "group": "Getting Started",
               "pages": [
                 "api-reference/introduction",
-                "api-reference/authentication",
                 "api-reference/quickstart",
+                "api-reference/authentication",
+                "api-reference/rate-limiting",
                 "api-reference/errors"
               ]
             },

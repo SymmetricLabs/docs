@@ -1,5 +1,5 @@
 ---
-title: "Workflow API Documentation"
+title: "Workflow API"
 description: "Complete guide to integrating and using the Tesseract Workflow API"
 ---
 
@@ -20,7 +20,7 @@ The Tesseract Workflow API enables you to programmatically manage and execute au
 
 <CardGroup cols={2}>
   <Card
-    title="Quick Start"
+    title="Quickstart"
     icon="rocket"
     href="/api-reference/quickstart"
   >
@@ -37,38 +37,13 @@ The Tesseract Workflow API enables you to programmatically manage and execute au
 
 ## Core Features
 
-Discover what you can build with the Tesseract Workflow API.
+Discover what you can build with the Tesseract Workflow API:
 
-<CardGroup cols={2}>
-  <Card
-    title="Workflow Management"
-    icon="diagram-project"
-    href="/api-reference/endpoint/create"
-  >
-    Start, stop, and monitor workflow executions
-  </Card>
-  <Card
-    title="Real-time Status"
-    icon="chart-line"
-    href="/api-reference/endpoint/webhook"
-  >
-    Track workflow progress and retrieve results
-  </Card>
-  <Card
-    title="Run History"
-    icon="clock-rotate-left"
-    href="/api-reference/endpoint/get-all-runs"
-  >
-    Access complete execution history and logs
-  </Card>
-  <Card
-    title="Error Handling"
-    icon="triangle-exclamation"
-    href="/api-reference/errors"
-  >
-    Robust error handling and debugging guides
-  </Card>
-</CardGroup>
+- **Workflow Management**: Create, start, and stop workflows programmatically
+- **Health Monitoring**: Check API health status and monitor workflow execution states
+- **Workflow Details**: Retrieve and manage workflow configurations and settings
+- **Status Tracking**: Get real-time status updates for any workflow run
+- **Run Management**: Manipulate workflow runs and manage execution history
 
 ## API Endpoints
 
@@ -116,24 +91,3 @@ Discover what you can build with the Tesseract Workflow API.
     `DELETE /v1/delete_workflow_run/{run_id}`
   </Card>
 </CardGroup>
-
-## Getting Started
-
-<Steps>
-  <Step title="Get Your API Key">
-    Obtain your API key from the Tesseract dashboard
-  </Step>
-  <Step title="Make Your First Call">
-    Test the connection with the health check endpoint
-  </Step>
-  <Step title="List Your Workflows">
-    Discover available workflows in your account
-  </Step>
-  <Step title="Start a Workflow">
-    Execute your first automated workflow
-  </Step>
-</Steps>
-
-<Note>
-  All API endpoints require authentication using Bearer tokens. Rate limits apply to ensure fair usage across all users.
-</Note>
