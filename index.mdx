@@ -1,93 +1,158 @@
 ---
-title: "Workflow API"
-description: "Complete guide to integrating and using the Tessa Workflow API"
+title: "Tessa AI"
 ---
 
 <img
   className="block dark:hidden"
   src="/images/hero-light.png"
-  alt="Tessa API Light"
+  alt="Tessa AI Light"
 />
 <img
   className="hidden dark:block"
   src="/images/hero-dark.png"
-  alt="Tessa API Dark"
+  alt="Tessa AI Dark"
 />
-
-## Welcome to Tessa
-
-The Tessa Workflow API enables you to programmatically manage and execute automated workflows. Build powerful integrations, automate complex processes, and scale your operations with our comprehensive REST API.
 
 <CardGroup cols={2}>
   <Card
-    title="Quickstart"
+    title="Get Started"
     icon="rocket"
-    href="/api-reference/quickstart"
+    href="/quickstart"
   >
-    Get up and running with your first API call in minutes
+    Start using Tessa in minutes with our quickstart guide
   </Card>
   <Card
-    title="Authentication"
-    icon="key"
-    href="/api-reference/authentication"
+    title="API Reference"
+    icon="code"
+    href="/api-reference/introduction"
   >
-    Learn how to securely authenticate with API keys
+    Explore our comprehensive API documentation
   </Card>
 </CardGroup>
 
-## Core Features
-
-Discover what you can build with the Tessa Workflow API:
-
-- **Workflow Management**: Create, start, and stop workflows programmatically
-- **Health Monitoring**: Check API health status and monitor workflow execution states
-- **Workflow Details**: Retrieve and manage workflow configurations and settings
-- **Status Tracking**: Get real-time status updates for any workflow run
-- **Run Management**: Manipulate workflow runs and manage execution history
-
-## API Endpoints
+## Key Features
 
 <CardGroup cols={3}>
   <Card
-    title="Health Check"
-    icon="heart-pulse"
-    href="/api-reference/endpoint/get"
-  >
-    `GET /v1/health`
-  </Card>
-  <Card
-    title="Get Workflows"
-    icon="list"
-    href="/api-reference/endpoint/create"
-  >
-    `GET /v1/get_workflow_details`
-  </Card>
-  <Card
-    title="Start Workflow"
-    icon="play"
-    href="/api-reference/endpoint/delete"
-  >
-    `POST /v1/start_workflow`
-  </Card>
-  <Card
-    title="Get Status"
+    title="High Accuracy Research"
     icon="magnifying-glass"
-    href="/api-reference/endpoint/webhook"
+    href="/features/research"
   >
-    `GET /v1/get_workflow_status/{run_id}`
+    State-of-the-art 93% accuracy on complex information retrieval
   </Card>
   <Card
-    title="Stop Workflow"
-    icon="stop"
-    href="/api-reference/endpoint/stop-workflow"
+    title="Video Chat Learning"
+    icon="video"
+    href="/features/learning"
   >
-    `POST /v1/stop_workflow/{run_id}`
+    Learn workflows through simple screen sharing
   </Card>
   <Card
-    title="Delete Run"
-    icon="trash"
-    href="/api-reference/endpoint/delete-run"
+    title="Smart Integration"
+    icon="plug"
+    href="/features/integration"
   >
-    `DELETE /v1/delete_workflow_run/{run_id}`
+    Seamlessly connects with your existing knowledge base
+  </Card>
+  <Card
+    title="Table Extraction"
+    icon="table"
+    href="/features/tables"
+  >
+    Reliably extracts data from complex tables
+  </Card>
+  <Card
+    title="Browser Automation"
+    icon="globe"
+    href="/features/automation"
+  >
+    Handles logins and overcomes paywalls
+  </Card>
+  <Card
+    title="Calendar & Email"
+    icon="envelope"
+    href="/features/calendar"
+  >
+    Integrated with Google Calendar, Gmail, and Drive
   </Card>
 </CardGroup>
+
+## Workflows
+Workflows are the building blocks of automation in Tessa. Each workflow consists of a series of connected nodes that work together to complete complex tasks. Here's how they work:
+
+1. **Nodes**: Each node represents a specific action or task in your workflow. For example:
+   - Browser actions (clicking, typing, navigating)
+   - Data processing (extracting information, transforming data)
+   - API calls (sending requests, handling responses)
+   - Decision points (if/else conditions, loops)
+
+2. **Connections**: Nodes are connected in sequence, with the output of one node becoming the input for the next. This creates a flow of data and actions that can handle complex processes.
+
+3. **Execution**: When you run a workflow, Tessa executes each node in sequence, passing data between them until the task is complete.
+
+For example, a workflow might:
+- Start by logging into a website
+- Navigate to a specific page
+- Extract data from a table
+- Process that data
+- Save the results to a spreadsheet
+
+You can create workflows through our visual interface or by describing what you want to accomplish in natural language. Tessa will automatically break down your request into the appropriate sequence of nodes.
+
+
+## Sandbox
+The Sandbox is your personal playground for testing and experimenting with Tessa's capabilities. It provides a safe environment where you can:
+
+1. **Start a Session**: Click the "New Sandbox" button to begin a fresh session where you can interact with Tessa directly.
+
+2. **Natural Language Interaction**: Simply describe what you want to do, and Tessa will help you accomplish it. For example:
+   - "Navigate to example.com and extract the main article"
+   - "Check my Gmail for important emails from last week"
+   - "Create a spreadsheet with data from this website"
+
+3. **File Management**: Upload and work with various file types:
+   - Documents (PDF, DOCX)
+   - Spreadsheets (XLSX, CSV)
+   - Images
+   - Text files
+
+4. **Testing Features**: Try out different capabilities:
+   - Web navigation and content extraction
+   - Email management and composition
+   - Calendar scheduling
+   - Data processing and transformation
+   - Browser automation tasks
+
+5. **Learning by Doing**: The Sandbox is perfect for:
+   - Learning how Tessa works
+   - Testing new workflows
+   - Debugging existing processes
+   - Experimenting with different approaches
+
+<Note>
+  The Sandbox is completely isolated from your production environment, so you can freely experiment without affecting your actual workflows or data.
+</Note>
+
+
+## Integrations
+Tessa integrates seamlessly with popular productivity tools and platforms, making it easy to automate tasks across your existing workflow:
+
+### Google Workspace
+- **Gmail**: Send and receive emails, manage inboxes, and automate email workflows
+- **Google Drive**: Upload, download, and manage files and folders
+- **Google Calendar**: Schedule meetings, manage events, and handle calendar operations
+- **Google Docs**: Create, edit, and collaborate on documents
+- **Google Sheets**: Process and analyze spreadsheet data, automate reporting
+
+### Microsoft 365
+- **Outlook**: Manage emails, calendars, and contacts
+- **OneDrive**: Handle file storage and sharing
+- **Microsoft Teams**: Send messages, manage channels, and automate team communications
+- **SharePoint**: Access and manage documents and lists
+
+### Communication Tools
+- **Slack**: Send messages, manage channels, and automate team notifications
+
+<Note>
+  To use these integrations, you'll need to authenticate with the respective services. Tessa handles the OAuth process securely, ensuring your data remains protected.
+</Note>
